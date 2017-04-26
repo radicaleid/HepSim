@@ -1,2 +1,5 @@
+*.slcio
+*.promc
+*.a
 *.o
 *~
