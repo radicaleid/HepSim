@@ -1,2 +1,4 @@
 # HepSim
-Code for the HepSim Monte Carlo repository
+Code examples for the  [HepSim Monte Carlo repository](http://atlaswww.hep.anl.gov/hepsim/)
+
+S.Chekanov (ANL)  
