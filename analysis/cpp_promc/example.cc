@@ -85,6 +85,9 @@ int main(int argc, char **argv)
 	//JetDefinition jet_def(fastjet::cambridge_algorithm, Rparam, strategy);
 	//JetDefinition jet_def(fastjet::antikt_algorithm, Rparam, strategy);
 
+
+        std::map<int,int> chargemap; // pad that keeps charge*3 
+
 	for(unsigned int m=0; m < files.size(); m++){
 		string Rfile=files[m];
 		ProMCBook*  epbook = new ProMCBook(Rfile.c_str(),"r");
@@ -100,6 +103,24 @@ int main(int argc, char **argv)
 		cout << "Events = " << nev  << endl;
 		// get the header file with units, cross sections etc.
 		ProMCHeader header = epbook->getHeader();
+
+
+                // this part reads the header information with particle data.
+                // you can access names, id, charge*3, and other useful
+                // information from PDG table. As an example, we make a map
+                // that keeps charge*3. 
+                if (m==0) {
+                for (int jj=0; jj<header.particledata_size(); jj++){
+                  ProMCHeader_ParticleData data= header.particledata(jj);
+                  int charge3=data.charge();
+                  int id=data.id();
+                  double mass=data.mass();
+                  string name=data.name();
+                  cout << "name=" << name << " mass=" << mass << " charge=" << charge3 << endl;
+                  chargemap[id]=charge3;
+                }
+                }
+
 
 		// here are the units
 		double kEV=(double)(header.momentumunit());
@@ -138,6 +159,8 @@ int main(int argc, char **argv)
 				double e= pa->energy(j)/kEV;
 				double pt=sqrt(px*px+py*py);
 				double eta=-log(tan(atan2(pt,(double)pz)/2));
+                                // int charge=chargemap[pa->pdg_id(j)]; // get charge 
+
 				if ( pt < 0.4)                   continue;
 				if ( fabs(eta)> 3.0 )            continue;
 				avec.push_back( fjcore::PseudoJet(px,py,pz,e) );
